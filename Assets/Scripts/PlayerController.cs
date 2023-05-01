@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.UIElements;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -19,11 +20,55 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] Animator anim;
 
+    [SerializeField] GameObject finishPrefab;
+
+    [SerializeField] Vector3 finishPosition;
+
+    [SerializeField] Quaternion finishRotation;
+
+    [SerializeField] TextMesh playerMsg;
+
     [SerializeField] float speed = 1.0f;
 
+    VisualElement root;
+
+    GameObject UIObject;
+
+    Label gameMessage;
+
+    //[SyncVar(hook = nameof(SetRaceState))]
+    //bool raceState = false;
+
+    [SyncVar] public bool raceState = false;
+
     // Start is called before the first frame update
+
+    private void Update()
+    {
+        //Debug.Log("STATE: " + raceState);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        UIObject = GameObject.FindGameObjectWithTag("UIDoc");
+        root = UIObject.GetComponent<UIDocument>().rootVisualElement;
+        VisualElement container = root.Q<VisualElement>("container");
+        container.visible = false;
+        gameMessage = container.Q<Label>("message");
+    }
+
     void Start()
     {
+        if (isServer)
+        {
+            /*
+            Debug.Log("Server Started");
+            GameObject finishLine = Instantiate(finishPrefab, finishPosition, finishRotation);
+            NetworkServer.Spawn(finishLine);
+            */
+        }
+
         if (!isLocalPlayer)
         {
             // Disable cam if not local player
@@ -35,8 +80,6 @@ public class PlayerController : NetworkBehaviour
         Debug.Log("My Value " + player_name_val);
         playerRB = GetComponent<Rigidbody>();
         Physics.gravity *= gravityModifier;
-        //Vector3 newPos = new Vector3(-25, 0.5f, 0);
-        // set start position based on something...
     }
 
     private void LateUpdate()
@@ -57,11 +100,29 @@ public class PlayerController : NetworkBehaviour
             isOnGround = false;
             Debug.Log("Jump");
         }
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            //resetPosition();
+        }
 
         transform.Translate(Vector3.forward * Time.deltaTime * speed * Random.value);
     }
 
-    // Command means this is being called from the client to the server
+    private void OnCollisionEnter(Collision other)
+    {
+        if (!isLocalPlayer) return;
+
+        if (other.gameObject.name == "Ground")
+        {
+            anim.SetBool("isJumping", false);
+            isOnGround = true;
+        }
+        else if (other.gameObject.name == "FinishLine")
+        {
+            CmdfinishRace(player_name_val);
+        }
+    }
+
     [Command]
     public void CmdfinishRace(float id)
     {
@@ -69,22 +130,49 @@ public class PlayerController : NetworkBehaviour
         RpcFinish(id);
     }
 
+    [ClientRpc]
+    public void RpcFinish(float playerID)
+    {
+        Debug.Log("Someone Finished " + playerID);
+        //playerMsg.text = "Done";
+        gameMessage.text = playerID + " Won!";
+        root.Q<VisualElement>("container").visible = true;
+    }
+
+    public void resetPlayer()
+    {
+        Debug.Log("reset position");
+        speed = 0;
+        transform.position = new Vector3(0.0f, 0.5f, 0.0f);
+    }
+
+
+    /*
+    [ServerCallback]
+    void OnTriggerEnter(Collider other)
+    {
+        //Debug.Log(other.gameObject.name);
+        RpcFinish(player_name_val);
+        //raceState = true;
+    }
+    */
+
+
+    /*
+    [ClientRpc]
+    public void RpcFinish(float playerID)
+    {
+        Debug.Log("Someone Finished " + playerID);
+        playerMsg.text = "Done";
+        root.Q<VisualElement>("container").visible = true;
+    }
+    */
+
+
+    /*
     private void OnCollisionEnter(Collision other)
     {
-        if (!isLocalPlayer) return;
-
-        // If this is the server send a message to other clients letting them know someone finshed
-        if (other.gameObject.name == "Finish")
-        {
-            CmdfinishRace(player_name_val);
-            speed = 0;
-            anim.SetBool("isDancing", true);
-        }
-
-        if (!isLocalPlayer)
-        {
-            return;
-        }
+        ///if (!isLocalPlayer) return;
 
         isOnGround = true;
         Debug.Log(other.gameObject.name);
@@ -92,25 +180,47 @@ public class PlayerController : NetworkBehaviour
         {
             anim.SetBool("isJumping", false);
         }
-
-        /*
         else if (other.gameObject.name == "Finish")
         {
-            
+            // If this is the server send a message to other clients letting them know someone finshed
+            CmdfinishRace(player_name_val);
+            anim.SetBool("isDancing", true);
+            speed = 0;
+            //raceState = true;
+            //StartCoroutine(prepareForNextRound());
         }
-        */
+    }*/
 
-        /*
-        if (other.gameObject.name == "Player_Y_Bot")
-        {
-            Debug.Log("Touching Player");
-        }
-        */
+    /*
+    void SetRaceState(bool oldVal, bool newVal)
+    {
+        Debug.Log(oldVal + " : " + newVal);
+        // give user instructions here
+    }*/
+
+    // Command means this is being called from the client to the server
+
+    /*
+
+
+    [Command]
+    public void CmdStartCountDown()
+    {
+
     }
+
+
 
     [ClientRpc]
     public void RpcFinish(float playerID)
     {
         Debug.Log(playerID);
     }
+
+    IEnumerator prepareForNextRound()
+    {
+        yield return new WaitForSeconds(3);
+        transform.position = new Vector3(0.0f, 0.5f, 0.0f);
+    }
+    */
 }

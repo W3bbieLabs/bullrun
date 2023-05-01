@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/bull_run_ui_style.uss?fileID=7433441132597879392&amp;guid=4957688a18a3e9549a76a5ab3eb2d274&amp;type=3#bull_run_ui_style" />
+    <ui:VisualElement name="container" style="flex-grow: 1; justify-content: center;">
+        <ui:VisualElement name="buttonholder" style="justify-content: center; align-items: center;">
+            <ui:Label display-tooltip-when-elided="true" name="message" />
+            <ui:Button text="Start" display-tooltip-when-elided="true" name="start" class="button" style="width: 50%;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
