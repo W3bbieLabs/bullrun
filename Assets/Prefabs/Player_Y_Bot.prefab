@@ -100,10 +100,10 @@ GameObject:
   - component: {fileID: 4899905298192313858}
   - component: {fileID: 354954400050526100}
   - component: {fileID: 3047197723414419177}
-  - component: {fileID: 1147544295990623537}
+  - component: {fileID: 2051050561612994605}
   m_Layer: 0
   m_Name: Player_Y_Bot
-  m_TagString: LocalPlayer
+  m_TagString: lp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -167,7 +167,7 @@ Animator:
   m_GameObject: {fileID: 294651685396103587}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: db75374acdc9559458476a7117f66149, type: 2}
+  m_Controller: {fileID: 9100000, guid: 59dd6aea5a3dbeb40b0822adaf4f598b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -193,17 +193,18 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   jumpForce: 40
+  lateralForce: 15
   gravityModifier: 7
   isOnGround: 1
   mainCam: {fileID: 534669904}
   offset: {x: 0, y: 2, z: -2.5}
   anim: {fileID: 637182331206120551}
-  finishPrefab: {fileID: 1374875862626426907, guid: 7a3120eb6ba49ca40aa18b7b6728fcfb, type: 3}
-  finishPosition: {x: 3.28768, y: -9.43, z: 54}
-  finishRotation: {x: 0, y: 0, z: 0, w: 0}
   playerMsg: {fileID: 554401068337852342}
-  speed: 10
-  raceState: 0
+  collisionPenalty: 50
+  speedBoost1: 100
+  raceSpeed: 50
+  isRaceActive: 0
+  serverCounterLength: 10
 --- !u!114 &4899905298192313858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,7 +268,7 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 1
   animator: {fileID: 637182331206120551}
---- !u!114 &1147544295990623537
+--- !u!114 &2051050561612994605
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -276,12 +277,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 294651685396103587}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eab15c07ed43ebd448f9432222c11118, type: 3}
+  m_Script: {fileID: 11500000, guid: bc849194912059048a01c668ca20ea66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  countDownLength: 11
+  isCounting: 0
 --- !u!1 &484654889494140295
 GameObject:
   m_ObjectHideFlags: 0
@@ -1595,7 +1598,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4517235829495599781}
-  m_Text: Hello World
+  m_Text: 
   m_OffsetZ: 0
   m_CharacterSize: 0.15
   m_LineSpacing: 1

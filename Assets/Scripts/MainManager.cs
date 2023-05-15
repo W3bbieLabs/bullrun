@@ -3,39 +3,56 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class MainManager : NetworkBehaviour
+namespace MainManage
 {
-    public static MainManager Instance;
-
-    void Awake()
+    public class MainManager : NetworkBehaviour
     {
-        Debug.Log("manager");
-        if (!isLocalPlayer)
-            return;
+        public static MainManager Instance;
+        [SyncVar] public int pCount = 0;
 
-        if (Instance != null)
+        void Awake()
         {
-            Destroy(gameObject);
-            return;
+            Debug.Log("manager");
+            if (!isLocalPlayer)
+                return;
+
+            if (Instance != null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+
+        public void incrementPlayerCount()
+        {
+            pCount++;
+        }
+
+        public void decrementPlayerCount()
+        {
+            pCount--;
+        }
+
+        public int getPCount()
+        {
+            return pCount;
+        }
+
+        /*
+        // Start is called before the first frame update
+        void Start()
+        {
+
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
+        */
     }
 
-
-
-
-    /*
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-    */
 }

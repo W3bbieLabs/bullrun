@@ -6,6 +6,13 @@ TagManager:
   tags:
   - UIDoc
   - LocalPlayer
+  - shared
+  - lp
+  - nm
+  - box
+  - boost
+  - wallL
+  - wallR
   layers:
   - Default
   - TransparentFX

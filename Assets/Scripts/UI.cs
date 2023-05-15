@@ -4,23 +4,21 @@ using UnityEngine.UIElements;
 public class UI : MonoBehaviour
 {
     PlayerController player;
+
+    /*
     private void OnEnable()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         Button buttonStart = root.Q<Button>("start");
+        Button buttonGo = root.Q<Button>("go");
         buttonStart.clicked += () => resetPlayer();
+        buttonGo.clicked += () => { takeOff(); };
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void takeOff()
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        player = GameObject.FindGameObjectWithTag("LocalPlayer").GetComponent<PlayerController>();
+        player.go();
     }
 
     void resetPlayer()
@@ -28,4 +26,6 @@ public class UI : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("LocalPlayer").GetComponent<PlayerController>();
         player.resetPlayer();
     }
+    */
+
 }

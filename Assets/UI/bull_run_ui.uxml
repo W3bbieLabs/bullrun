@@ -1,9 +1,19 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/bull_run_ui_style.uss?fileID=7433441132597879392&amp;guid=4957688a18a3e9549a76a5ab3eb2d274&amp;type=3#bull_run_ui_style" />
-    <ui:VisualElement name="container" style="flex-grow: 1; justify-content: center;">
-        <ui:VisualElement name="buttonholder" style="justify-content: center; align-items: center;">
-            <ui:Label display-tooltip-when-elided="true" name="message" />
-            <ui:Button text="Start" display-tooltip-when-elided="true" name="start" class="button" style="width: 50%;" />
+    <ui:VisualElement name="container" style="flex-grow: 1; justify-content: flex-start; align-items: center;">
+        <ui:VisualElement name="message-container" style="width: 100%; background-color: rgb(255, 255, 255); justify-content: center; align-items: center; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); height: auto; display: flex; -unity-text-outline-color: rgb(255, 255, 255);">
+            <ui:Label display-tooltip-when-elided="true" name="message" text="testing" style="color: rgb(0, 0, 0); border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); display: flex;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="player-count-container" style="flex-direction: row; width: 100%; background-color: rgb(255, 255, 255); justify-content: center; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); display: flex;">
+            <ui:Label text="Players: " display-tooltip-when-elided="true" style="color: rgb(46, 6, 6); padding-right: 0;" />
+            <ui:Label display-tooltip-when-elided="true" name="players" text="0" style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); padding-left: 0;" />
+        </ui:VisualElement>
+        <ui:Label text="0" display-tooltip-when-elided="true" name="countdown" style="font-size: 60px; -unity-font-definition: none; -unity-font: url(&apos;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=eda2b828ab549644faab926e53b7e478&amp;type=3#NotInter-Regular&apos;);" />
+        <ui:VisualElement name="button-container" style="flex-direction: row; background-color: rgb(255, 255, 255); width: 100%; justify-content: center; align-items: auto; padding-top: 10px; padding-bottom: 10px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); display: none;">
+            <ui:Button text="&lt;" display-tooltip-when-elided="true" name="left" class="button" style="width: 20%; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); height: auto; border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-right-width: 5px; border-bottom-width: 5px;" />
+            <ui:Button text="Jump" display-tooltip-when-elided="true" name="jump" class="button" style="width: 20%; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-right-width: 5px; border-bottom-width: 5px;" />
+            <ui:Button text="Go" display-tooltip-when-elided="true" name="go" class="button" style="width: 20%; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-right-width: 5px; border-bottom-width: 5px;" />
+            <ui:Button text="&gt;" display-tooltip-when-elided="true" name="right" class="button" style="width: 20%; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border-right-width: 5px; border-bottom-width: 5px;" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
