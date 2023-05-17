@@ -67,10 +67,6 @@ public class PlayerController : NetworkBehaviour
         Vector2 movementInput = playerInput.PlayerMain.Move.ReadValue<Vector2>();
         move(movementInput);
 
-        if (playerInput.PlayerMain.Jump.triggered && isOnGround)
-        {
-            moveJump();
-        }
 
         if (shared.getIsRacing())
         {
@@ -201,8 +197,12 @@ public class PlayerController : NetworkBehaviour
 
         }
 
-        if (!isLocalPlayer) return;
+        if (!isLocalPlayer) return; // local player only after this line
 
+        if (playerInput.PlayerMain.Jump.triggered && isOnGround)
+        {
+            moveJump();
+        }
 
         mainCam.transform.position = transform.position + offset;
         playerCount.text = shared.GetPlayerCount().ToString();
@@ -244,7 +244,7 @@ public class PlayerController : NetworkBehaviour
 
         //if (!isLocalPlayer) return;
 
-        if (other.gameObject.name == "Ground" && isLocalPlayer)
+        if (other.gameObject.CompareTag("ground") && isLocalPlayer)
         {
             anim.SetBool("isJumping", false);
             isOnGround = true;
@@ -310,10 +310,11 @@ public class PlayerController : NetworkBehaviour
         if (shared.getIsRacing())
         {
             speed = raceSpeed;
+            anim.SetBool("isGo", true);
 
             if (isLocalPlayer)
             {
-                anim.SetBool("isGo", true);
+                //anim.SetBool("isGo", true);
             }
 
             //Debug.Log("GO");
@@ -333,7 +334,7 @@ public class PlayerController : NetworkBehaviour
     {
         //Debug.Log("reset position");
         speed = 0;
-        transform.position = new Vector3(transform.position.x, transform.position.y, 0.0f);
+        transform.position = new Vector3(transform.position.x, 1.0f, 0.0f);
     }
 
 
