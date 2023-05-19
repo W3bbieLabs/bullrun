@@ -1,31 +1,64 @@
 using UnityEngine;
-using UnityEngine.UIElements;
+using Thirdweb;
+using UnityEngine.UI;
+using Mirror;
 
 public class UI : MonoBehaviour
 {
     PlayerController player;
 
-    /*
-    private void OnEnable()
+    [SerializeField] GameObject connectButton;
+
+    [SerializeField] GameObject mainMenu;
+
+    [SerializeField] GameObject controlsCanvas;
+
+    [SerializeField] GameObject countCanvas;
+
+    [SerializeField] NetworkManager networkManager;
+
+    [SerializeField] string networkAddress;
+
+    private void Start()
     {
-        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-        Button buttonStart = root.Q<Button>("start");
-        Button buttonGo = root.Q<Button>("go");
-        buttonStart.clicked += () => resetPlayer();
-        buttonGo.clicked += () => { takeOff(); };
+        //hideCanvas(countCanvas);
+        connectButton.GetComponent<Button>().onClick.AddListener(() => OnClick());
+        //mainMenu.active = false;
     }
 
-    void takeOff()
+    public void OnClick()
     {
-        player = GameObject.FindGameObjectWithTag("LocalPlayer").GetComponent<PlayerController>();
-        player.go();
+        ConnectClient();
+        Debug.Log("Clicked");
+        hideCanvas(mainMenu);
+        showCanvas(controlsCanvas);
+        //showCanvas(countCanvas);
     }
 
-    void resetPlayer()
+    public void hideCanvas(GameObject canvas)
     {
-        player = GameObject.FindGameObjectWithTag("LocalPlayer").GetComponent<PlayerController>();
-        player.resetPlayer();
+        Renderer renderer = canvas.GetComponent<Renderer>();
+        canvas.SetActive(false);
+        if (renderer != null)
+        {
+            renderer.enabled = false;
+        }
     }
-    */
 
+    public void showCanvas(GameObject canvas)
+    {
+        Renderer renderer = canvas.GetComponent<Renderer>();
+        canvas.SetActive(true);
+        if (renderer != null)
+        {
+            renderer.enabled = true;
+        }
+    }
+
+    public void ConnectClient()
+    {
+        networkManager.networkAddress = networkAddress;
+        networkManager.StartClient();
+        //mainMusic.Stop();
+    }
 }

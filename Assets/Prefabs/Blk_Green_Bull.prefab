@@ -1245,9 +1245,12 @@ MonoBehaviour:
   playerMsg: {fileID: 7197476241833792298}
   collisionPenalty: 50
   speedBoost1: 100
+  boostIntensity: 2
+  boostLength: 1
   raceSpeed: 50
   isRaceActive: 0
   serverCounterLength: 10
+  balanceText: {fileID: 0}
 --- !u!114 &5194987472146655937
 MonoBehaviour:
   m_ObjectHideFlags: 0

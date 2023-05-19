@@ -15,6 +15,9 @@ TagManager:
   - wallR
   - ground
   - bear
+  - balance
+  - water
+  - MainMenu
   layers:
   - Default
   - TransparentFX

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.UIElements;
+using Thirdweb;
+using TMPro;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -28,7 +30,14 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] int collisionPenalty = 50;
 
-    [SerializeField] int speedBoost1 = 100;
+    [SerializeField] int speedBoost1 = 500;
+
+    [SerializeField] float boostIntensity = 1.25f;
+
+    [SerializeField] int boostLength = 1;
+
+    [SerializeField]
+    float fallPenalty = 50f;
 
     float speed = 0.0f;
 
@@ -59,6 +68,11 @@ public class PlayerController : NetworkBehaviour
 
     private Player playerInput;
 
+    string DROP_ERC20_CONTRACT = "0xA112614CB7262336E9AC667fa0b7233FD3E041F7";
+
+    public TMP_Text balanceText;
+
+
     private void Update()
     {
         //Debug.Log("isRaceActive: " + isRaceActive);
@@ -68,7 +82,7 @@ public class PlayerController : NetworkBehaviour
         move(movementInput);
 
 
-        if (shared.getIsRacing())
+        if (shared.getIsRacing() && speed == 0)
         {
             go();
         }
@@ -194,7 +208,6 @@ public class PlayerController : NetworkBehaviour
                 shared.setRaceState(false);
                 shared.SetIsCounting(false);
             }
-
         }
 
         if (!isLocalPlayer) return; // local player only after this line
@@ -205,7 +218,17 @@ public class PlayerController : NetworkBehaviour
         }
 
         mainCam.transform.position = transform.position + offset;
-        playerCount.text = shared.GetPlayerCount().ToString();
+
+        try
+        {
+            playerCount.text = shared.GetPlayerCount().ToString();
+        }
+        catch (System.Exception)
+        {
+
+            Debug.Log("nO COUNNTERS");
+        }
+
 
         if (shared.GetCountDown() == 6)
         {
@@ -283,14 +306,29 @@ public class PlayerController : NetworkBehaviour
 
         if (other.gameObject.CompareTag("box"))
         {
-            Debug.Log("BOX");
+            //Debug.Log("BOX");
             playerRB.AddForce(Vector3.forward * -collisionPenalty, ForceMode.Impulse);
         }
 
         if (other.gameObject.CompareTag("boost"))
         {
             Debug.Log("boost");
-            playerRB.AddForce(Vector3.forward * speedBoost1, ForceMode.Impulse);
+            StartCoroutine(speedBoost(boostLength, boostIntensity));
+            //playerRB.AddForce(Vector3.forward * speedBoost1, ForceMode.Impulse);
+            //speed *= 2;
+        }
+
+        if (other.gameObject.CompareTag("water"))
+        {
+            float newPosition = transform.position.z - fallPenalty;
+            if (newPosition > 0)
+            {
+                transform.position = new Vector3(0f, 1f, transform.position.z - fallPenalty);
+            }
+            else
+            {
+                transform.position = new Vector3(0f, 1f, 0f);
+            }
         }
 
         if (other.gameObject.CompareTag("wallL"))
@@ -338,6 +376,27 @@ public class PlayerController : NetworkBehaviour
     }
 
 
+    IEnumerator speedBoost(int length, float intensity)
+    {
+        // Boost speed
+        speed *= intensity;
+        yield return new WaitForSeconds(length);
+        speed /= intensity;
+        // return speed
+    }
+
+    /*
+    async void claim()
+    {
+        
+        Contract contract = ThirdwebManager.Instance.SDK.GetContract(DROP_ERC20_CONTRACT);
+        var result = await contract.ERC20.Claim("5");
+        CurrencyValue nativeBalance = await ThirdwebManager.Instance.SDK.wallet.GetBalance(DROP_ERC20_CONTRACT);
+        balanceText.text = $"{nativeBalance.value.ToEth()} Bull Tokens";
+        
+    }
+
+    */
 
 
     /********************** Client **************************************/
