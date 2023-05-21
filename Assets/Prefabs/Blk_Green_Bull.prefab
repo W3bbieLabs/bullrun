@@ -1117,8 +1117,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5880506432818943401}
-  m_LocalRotation: {x: -0.020632436, y: 0.11996242, z: 0.031699225, w: 0.99205774}
-  m_LocalPosition: {x: -0.0054771886, y: 0.7047376, z: 0.0056825043}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1213,7 +1213,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: db75374acdc9559458476a7117f66149, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -1242,11 +1242,12 @@ MonoBehaviour:
   mainCam: {fileID: 8992120338136298734}
   offset: {x: 0, y: 6, z: -8.5}
   anim: {fileID: 6325221109610701472}
-  playerMsg: {fileID: 7197476241833792298}
+  playerMsg: {fileID: 0}
   collisionPenalty: 50
   speedBoost1: 100
   boostIntensity: 2
   boostLength: 1
+  fallPenalty: 50
   raceSpeed: 50
   isRaceActive: 0
   serverCounterLength: 10
@@ -1547,8 +1548,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7358030132492086104}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -0, y: 0.48275, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 471.28506, y: 471.28506, z: 471.28506}
   m_ConstrainProportionsScale: 0
   m_Children:

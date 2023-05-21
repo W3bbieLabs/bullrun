@@ -18,6 +18,13 @@ TagManager:
   - balance
   - water
   - MainMenu
+  - wallet
+  - levelMusic
+  - powerup
+  - winaudio
+  - lossaudio
+  - boxaudio
+  - footsteps
   layers:
   - Default
   - TransparentFX

@@ -15,6 +15,10 @@ public class UI : MonoBehaviour
 
     [SerializeField] GameObject countCanvas;
 
+    [SerializeField] GameObject joyStick;
+
+    [SerializeField] GameObject jumpButton;
+
     [SerializeField] NetworkManager networkManager;
 
     [SerializeField] string networkAddress;
@@ -29,10 +33,13 @@ public class UI : MonoBehaviour
     public void OnClick()
     {
         ConnectClient();
-        Debug.Log("Clicked");
+        //Debug.Log("Clicked");
         hideCanvas(mainMenu);
         showCanvas(controlsCanvas);
+        showCanvas(joyStick);
+        showCanvas(jumpButton);
         //showCanvas(countCanvas);
+        GameObject.FindGameObjectWithTag("levelMusic").GetComponent<AudioSource>().Play();
     }
 
     public void hideCanvas(GameObject canvas)

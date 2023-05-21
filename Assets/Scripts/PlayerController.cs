@@ -26,7 +26,7 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] Animator anim;
 
-    [SerializeField] TextMesh playerMsg;
+    [SerializeField] TextMeshPro username;
 
     [SerializeField] int collisionPenalty = 50;
 
@@ -72,6 +72,13 @@ public class PlayerController : NetworkBehaviour
 
     public TMP_Text balanceText;
 
+    Prefab_ConnectWallet wallet_prefab;
+
+    public string dancingID;
+
+    public string emoteID = "-1";
+
+    bool isFootstepsPlaying = false;
 
     private void Update()
     {
@@ -107,6 +114,8 @@ public class PlayerController : NetworkBehaviour
         UIObject = GameObject.FindGameObjectWithTag("UIDoc");
         root = UIObject.GetComponent<UIDocument>().rootVisualElement;
         playerRB = GetComponent<Rigidbody>();
+        wallet_prefab = GameObject.FindGameObjectWithTag("wallet").GetComponent<Prefab_ConnectWallet>();
+
         //container.visible = false;
 
         // Configure restart and go buttons
@@ -180,6 +189,14 @@ public class PlayerController : NetworkBehaviour
         Physics.gravity *= gravityModifier;
         playerCount = root.Q<VisualElement>("player-count-container").Q<Label>("players");
         countDownLabel = root.Q<VisualElement>("container").Q<Label>("countdown");
+
+
+        //wallet_prefab.GetERC1155();
+
+        // Get Dance ID here
+        dancingID = "isDancing";
+
+        // Get 1155s
     }
 
     private void LateUpdate()
@@ -233,8 +250,18 @@ public class PlayerController : NetworkBehaviour
         if (shared.GetCountDown() == 6)
         {
             resetPlayer();
-            anim.SetBool("isDancing", false);
+            anim.SetBool(dancingID, false);
             anim.SetBool("isGo", false);
+            if (emoteID == "-1")
+            {
+                GetRandomERC1155();
+            }
+            /*
+            if (username.text == "")
+            {
+                username.text = wallet_prefab.getWalletDisplay(); // change this to only happen once in the app
+            }
+            */
         }
 
         if (shared.GetCountDown() < 1)
@@ -252,12 +279,15 @@ public class PlayerController : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
+        /*
         if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
         {
-            anim.SetBool("isJumping", true);
-            playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isOnGround = false;
-        }
+            //anim.SetBool("isJumping", true);
+            //playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            //isOnGround = false;
+            StartCoroutine(moveJump());
+        }*/
+
 
         transform.Translate(Vector3.forward * Time.deltaTime * speed * Random.value);
     }
@@ -271,6 +301,13 @@ public class PlayerController : NetworkBehaviour
         {
             anim.SetBool("isJumping", false);
             isOnGround = true;
+            // Probably should only do 
+            if (shared.getIsRacing() && !isFootstepsPlaying)
+            {
+                playFootsteps();
+                Debug.Log("Playing footsteps");
+            }
+
         }
 
         else if (other.gameObject.name == "FinishLine") // check if anyone crossed
@@ -283,9 +320,10 @@ public class PlayerController : NetworkBehaviour
 
                 if (isLocalPlayer)
                 {
-                    anim.SetBool("isDancing", true);
+                    anim.SetBool(dancingID, true);
                     Debug.Log("Winner");
-
+                    wallet_prefab.ClaimERC20("5");
+                    GameObject.FindGameObjectWithTag("winaudio").GetComponent<AudioSource>().Play();
                 }
             }
             else
@@ -294,6 +332,7 @@ public class PlayerController : NetworkBehaviour
                 {
                     anim.SetBool("isGo", false);
                     Debug.Log("Loser");
+                    GameObject.FindGameObjectWithTag("lossaudio").GetComponent<AudioSource>().Play();
                 }
             }
 
@@ -303,23 +342,29 @@ public class PlayerController : NetworkBehaviour
             }
         }
 
+        if (!isLocalPlayer) return;
 
         if (other.gameObject.CompareTag("box"))
         {
             //Debug.Log("BOX");
             playerRB.AddForce(Vector3.forward * -collisionPenalty, ForceMode.Impulse);
+            GameObject.FindGameObjectWithTag("boxaudio").GetComponent<AudioSource>().Play();
+
         }
 
         if (other.gameObject.CompareTag("boost"))
         {
             Debug.Log("boost");
             StartCoroutine(speedBoost(boostLength, boostIntensity));
+            GameObject.FindGameObjectWithTag("powerup").GetComponent<AudioSource>().Play();
+
             //playerRB.AddForce(Vector3.forward * speedBoost1, ForceMode.Impulse);
             //speed *= 2;
         }
 
         if (other.gameObject.CompareTag("water"))
         {
+            GameObject.FindGameObjectWithTag("boxaudio").GetComponent<AudioSource>().Play();
             float newPosition = transform.position.z - fallPenalty;
             if (newPosition > 0)
             {
@@ -329,6 +374,7 @@ public class PlayerController : NetworkBehaviour
             {
                 transform.position = new Vector3(0f, 1f, 0f);
             }
+
         }
 
         if (other.gameObject.CompareTag("wallL"))
@@ -345,6 +391,7 @@ public class PlayerController : NetworkBehaviour
     public void go()
     {
         Debug.Log("Go");
+        playFootsteps();
         if (shared.getIsRacing())
         {
             speed = raceSpeed;
@@ -352,7 +399,7 @@ public class PlayerController : NetworkBehaviour
 
             if (isLocalPlayer)
             {
-                //anim.SetBool("isGo", true);
+                anim.SetBool("isGo", true);
             }
 
             //Debug.Log("GO");
@@ -360,9 +407,10 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    public void moveJump()
+    void moveJump()
     {
         //Debug.Log("Jump");
+        stopFootsteps();
         anim.SetBool("isJumping", true);
         playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         isOnGround = false;
@@ -383,6 +431,42 @@ public class PlayerController : NetworkBehaviour
         yield return new WaitForSeconds(length);
         speed /= intensity;
         // return speed
+    }
+
+    public async void GetRandomERC1155()
+    {
+        const string ERC1155_CONTRACT = "0x59336Fd357f07a6501B2444556ae98633B741297";
+        Contract contractERC1155 = ThirdwebManager.Instance.SDK.GetContract(ERC1155_CONTRACT);
+        List<NFT> tempNFTList = await contractERC1155.ERC1155.GetOwned();
+        if (tempNFTList.Count > 0)
+        {
+            NFT randomNFT = GetRandomNFT(tempNFTList);
+            emoteID = randomNFT.metadata.id;
+            dancingID = $"isDancing{emoteID}";
+        }
+        else
+        {
+            print("No emotes.");
+        }
+        //Console.WriteLine($"random id: {randomNFT.metadata.id} name: {randomNFT.metadata.name}");
+    }
+
+    public NFT GetRandomNFT(List<NFT> list)
+    {
+        int randomIndex = (int)UnityEngine.Random.Range(0, list.Count);
+        return list[randomIndex];
+    }
+
+    public void playFootsteps()
+    {
+        GameObject.FindGameObjectWithTag("footsteps").GetComponent<AudioSource>().Play();
+        isFootstepsPlaying = true;
+    }
+
+    public void stopFootsteps()
+    {
+        GameObject.FindGameObjectWithTag("footsteps").GetComponent<AudioSource>().Stop();
+        isFootstepsPlaying = false;
     }
 
     /*

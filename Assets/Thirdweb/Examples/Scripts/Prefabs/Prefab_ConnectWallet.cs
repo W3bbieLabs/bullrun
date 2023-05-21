@@ -91,7 +91,26 @@ public class Prefab_ConnectWallet : MonoBehaviour
     Wallet wallet;
 
     const string DROP_ERC20_CONTRACT = "0xA112614CB7262336E9AC667fa0b7233FD3E041F7";
+    const string ERC1155_CONTRACT = "0x59336Fd357f07a6501B2444556ae98633B741297";
 
+    Contract contractERC20;
+    Contract contractERC1155;
+
+    string walletDisplay = null;
+
+
+    public async void ClaimERC20(string amount)
+    {
+        contractERC20 = ThirdwebManager.Instance.SDK.GetContract(DROP_ERC20_CONTRACT);
+        var result = await contractERC20.ERC20.Claim(amount);
+        CurrencyValue nativeBalance = await ThirdwebManager.Instance.SDK.wallet.GetBalance(DROP_ERC20_CONTRACT);
+        balanceText.text = $"{nativeBalance.value.ToEth()} Bull Tokens";
+    }
+
+    public string getWalletDisplay()
+    {
+        return walletDisplay;
+    }
 
     // UI Initialization
 
@@ -127,6 +146,8 @@ public class Prefab_ConnectWallet : MonoBehaviour
 
         networkSwitchButton.SetActive(supportSwitchingNetwork);
         networkDropdown.SetActive(false);
+
+
     }
 
     // Connecting
@@ -158,7 +179,8 @@ public class Prefab_ConnectWallet : MonoBehaviour
             CurrencyValue nativeBalance = await ThirdwebManager.Instance.SDK.wallet.GetBalance(DROP_ERC20_CONTRACT);
             balanceText.text = $"{nativeBalance.value.ToEth()} Bull Tokens";
             balanceText2.text = balanceText.text;
-            walletAddressText.text = await Utils.GetENSName(address) ?? address.ShortenAddress();
+            walletDisplay = await Utils.GetENSName(address) ?? address.ShortenAddress();
+            walletAddressText.text = walletDisplay;
             walletAddressText2.text = walletAddressText.text;
         }
         catch (Exception e)
@@ -188,6 +210,7 @@ public class Prefab_ConnectWallet : MonoBehaviour
             */
         }
     }
+
 
     // Disconnecting
 
